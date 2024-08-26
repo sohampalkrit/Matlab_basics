@@ -1,0 +1,17 @@
+%question 1 discrete system
+%part a)
+t=[-5:1:5];
+T=inline('(t+3).*(t>=-3 & t<=0)+(-t+3).*(t>0 & t<=3)','t');
+subplot(4,1,1);
+stem(t,T(t));
+subplot(4,1,2);
+stem(t,T(-t));
+subplot(4,1,3);
+stem(t,T(3.*t));
+subplot(4,1,4);
+stem(t,T(t./2));
+
+%part b)
+x=[-10:1:20];
+F=inline('(x+6).*(x>=-6 & x<=-3)+3.*(x>-3 & x<=2)+((-3/2).*(x-2)+3).*(x>2 & x<=3)+1.5.*(x>3 & x<=4)+(3/2.*(x-5)+3).*(x>4 & x<=5)+3.*(x>5 & x<=6)+(-1/3.*(x-15)).*(x>6 & x<=15)','x');
+stem(x,F(x));
