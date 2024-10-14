@@ -1,0 +1,19 @@
+n = (-2:10)'; % Define the discrete time range for the solution
+y = [0 ; -25 ; zeros(length(n)-2, 1)]; % Predefine the output array with initial conditions
+x = [0; 0; zeros(length(n)-2, 1)]; % Define the input array
+
+% Iterative computation starts here
+for k = 3:length(n) % Start from the third index
+   y(k) = -0.16*y(k-2) + 0.6*y(k-1); % Update based on recurrence relation
+end
+
+% Plot the Zero-Input Response
+figure;
+stem(n, y);
+title('Zero-Input Response');
+xlabel('n');
+ylabel('y[n]');
+
+ylabel('y[n]');
+
+%for finding impulse response 
