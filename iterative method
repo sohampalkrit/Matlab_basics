@@ -1,0 +1,53 @@
+
+
+x0 = 0;          
+epsilon = 1e-6;   
+max_iter = 50;    % Maximum iterations
+
+% Initialize
+x_old = x0;
+iter = 0;
+x_values = x0;    % Array to store x values
+
+
+while iter < max_iter
+
+    iter = iter + 1;
+    
+    % Calculate new value: x = e^(-x)
+    x_new = exp(-x_old);
+    
+    % Store value for plotting
+    x_values(iter + 1) = x_new;
+
+    error = abs(x_new - x_old);
+    
+    % Display results
+    %fprintf('%d\t\t%.6f\t\t%.6f\n', iter, x_new, error);
+    
+    % Check convergence
+    if error <= epsilon
+        break;
+    end
+    
+    % Update x for next iteration
+    x_old = x_new;
+end
+
+
+fprintf('\nFinal solution: x = %.6f\n', x_new);
+fprintf('Number of iterations: %d\n', iter);
+fprintf('Final error: %.6e\n', error);
+
+% Create figure for plotting
+figure;
+
+
+plot(0:iter, x_values);
+title('Fixed Point Iteration Convergence');
+xlabel('Iteration Number');
+ylabel('Value of x');
+
+
+
+
