@@ -1,0 +1,36 @@
+% Fixed-Point Iteration Method for V2 Calculation using a while loop
+
+% Given Parameters
+V1 = 1 + 0i;          % V1 in rectangular form (1.0 ∠ 0°)
+SL = 1 + 0.5i;        % Complex load power
+jX = 0 + 0.1i;        % Impedance (jX)
+epsilon = 1e-4;       % Convergence tolerance
+max_iterations = 100; % Maximum number of iterations
+
+% Initial Guess
+V2 = V1; % Initial guess V2^(0)
+iterations = 0; % Initialize iteration count
+converged = false; % Convergence flag
+
+% Fixed-Point Iteration Loop
+while iterations < max_iterations
+    V2_prev = V2; % Store the previous V2
+    % Compute the next V2 using the fixed-point formula
+    V2 = V1 - (SL / conj(V2_prev)) / jX;
+    % Increment iteration count
+    iterations = iterations + 1;
+    % Check for convergence
+    if abs(V2 - V2_prev) <= epsilon
+        converged = true;
+        break;
+    end
+end
+
+% Display Results
+if converged
+    fprintf('Converged after %d iterations.\n', iterations);
+    fprintf('V2 = %.4f + %.4fi\n', real(V2), imag(V2));
+else
+    fprintf('Did not converge within %d iterations.\n', max_iterations);
+    fprintf('Last computed V2 = %.4f + %.4fi\n', real(V2), imag(V2));
+end
