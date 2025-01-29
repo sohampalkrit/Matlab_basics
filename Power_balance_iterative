@@ -1,0 +1,43 @@
+V1=1;
+SL=1+1j*0.5;
+SL_conj=conj(SL);
+i=0; 
+count=0;
+V2_k=zeros(1,100);
+V2_old=1+0j;
+V2_k(1)=V2_old;
+max_i=99;
+ fprintf("i \t magnitute \t angle\n")
+  fprintf("1 \t 1.000000 \t angle{0.000000}\n")
+while i<max_i
+    
+    V2_new =1-(conj((SL/V2_old))*1j*0.1);
+    V2_k(i+2)=V2_new;
+   
+   
+   break_point = abs(V2_new - V2_old);
+   count=count+1;
+  fprintf('%i \t%f \t angle{%f}\n',i+2,abs(V2_new),(180/pi)*(angle(V2_new)));
+
+   if(break_point<episilon)
+       break
+   end
+   V2_old=V2_new;
+   i=i+1;
+end
+%plotting
+t=linspace(1,50,100);
+figure ;
+subplot(2,1,1)
+plot(t,abs(V2_k))
+title('magnitute V2')
+subplot(2,1,2)
+plot(t,angle(V2_k))
+title('angle of V2')
+
+%power balaance checking 
+I= conj((SL)/(V2_new));
+P_1=abs(I)^2*1j*0.1;
+P_disp=P_1+SL;
+P_source = V1*(conj(I));
+
