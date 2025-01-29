@@ -1,0 +1,104 @@
+% Main script: save as 'main_power_system.m'
+clear all;
+close all;
+clc;
+
+% Call the power system function
+V2_final = powerSystemFP();
+
+% Display results in formatted output
+fprintf('\nFinal Results Summary:\n');
+fprintf('V2 Magnitude = %.6f pu\n', abs(V2_final));
+fprintf('V2 Angle = %.6f degrees\n', rad2deg(angle(V2_final)));
+fprintf('V2 = %.6f + j%.6f pu\n', real(V2_final), imag(V2_final));
+
+% Function definition: save as 'powerSystemFP.m'
+function V2 = powerSystemFP()
+    % Power System Fixed-Point Iteration Method
+    % Given parameters
+    V1 = 1.0;          % V1 magnitude in pu
+    theta1 = 0;        % V1 angle in degrees
+    V1_complex = V1 * exp(1i * deg2rad(theta1));
+    
+    SL = 1.0 + 1i * 0.5;  % Complex load power in pu
+    jx = 1i * 0.1;        % Line reactance in pu
+    
+    % Initial guess
+    V2_k = 1.0 + 1i * 0;  % V2(0) = 1.0∠0°
+    
+    % Iteration parameters
+    epsilon = 1e-6;       % Convergence criterion
+    max_iter = 100;       % Maximum iterations
+    iter = 0;             % Iteration counter
+    
+    % Arrays to store results
+    V2_history = zeros(max_iter + 1, 1);
+    error_history = zeros(max_iter, 1);
+    
+    % Store initial guess
+    V2_history(1) = V2_k;
+    
+    % Fixed-point iteration
+    while iter < max_iter
+        % Calculate next iteration
+        V2_next = V1_complex - (conj(SL)/conj(V2_k)) * jx;
+        
+        % Calculate error
+        error = abs(V2_next - V2_k);
+        error_history(iter + 1) = error;
+        
+        % Store result
+        V2_history(iter + 2) = V2_next;
+        
+        % Check convergence
+        if error < epsilon
+            break;
+        end
+        
+        % Update for next iteration
+        V2_k = V2_next;
+        iter = iter + 1;
+    end
+    
+    % Trim history arrays to actual size
+    V2_history = V2_history(1:iter + 2);
+    error_history = error_history(1:iter + 1);
+    
+    % Display results
+    fprintf('\nResults after %d iterations:\n', iter + 1);
+    fprintf('V2 = %.6f∠%.6f°\n', abs(V2_k), rad2deg(angle(V2_k)));
+    
+    % Plot convergence
+    plotConvergence(V2_history, error_history);
+    
+    % Return final value
+    V2 = V2_k;
+end
+
+function plotConvergence(V2_history, error_history)
+    % Create figure with two subplots
+    figure('Name', 'Convergence Analysis');
+    
+    % Plot voltage magnitude and angle
+    subplot(2,2,1);
+    plot(0:length(V2_history)-1, abs(V2_history), 'b-o');
+    grid on;
+    xlabel('Iteration');
+    ylabel('Voltage Magnitude (pu)');
+    title('V2 Magnitude Convergence');
+    
+    subplot(2,2,2);
+    plot(0:length(V2_history)-1, rad2deg(angle(V2_history)), 'r-o');
+    grid on;
+    xlabel('Iteration');
+    ylabel('Voltage Angle (degrees)');
+    title('V2 Angle Convergence');
+    
+    % Plot error
+    subplot(2,2,[3,4]);
+    semilogy(1:length(error_history), error_history, 'k-o');
+    grid on;
+    xlabel('Iteration');
+    ylabel('Error (pu)');
+    title('Convergence Error');
+end
